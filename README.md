@@ -42,3 +42,20 @@ The app has two endpoints:
   This will calculate the distance between the two given authors. (some\_other\_author is treated as Kevin Bacon)
 
 The output format is shamelessly ripped off of [Google](https://www.google.com/#q=bacon+number+of+keanu+reeves)
+
+
+### The Query
+
+The [Cypher](http://www.neo4j.org/learn/cypher) Query to retrieve the Bacon Number and its intermediate steps is
+
+	MATCH
+		p=shortestPath((kevin:Person)-[r:ACTED_IN*]-(actor))
+	WHERE
+		kevin.name={kevin} AND actor.name={actor}
+	RETURN
+		length([m in nodes(p) WHERE m:Movie]) as BaconNumber,
+		[m in nodes(p) WHERE m:Movie | m.title] as Movies,
+		[a in nodes(p) WHERE a:Person | a.name][1..-1] as KnowsActors
+
+`{kevin}` and `{actor}` are substituted with the given actor names.
+
